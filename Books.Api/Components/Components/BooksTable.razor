@@ -1,0 +1,57 @@
+﻿@using Books.API.Server.Models
+@using Books.API.Server.Services
+@inject IBookService bookService
+@inject NavigationManager navManager;
+
+@if (response == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in response)
+            {
+                <tr>
+                    <td>@book.Id</td>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>
+                        <a class="btn btn-primary" href="/books/@book.Id">Info</a>
+                        <a class="btn btn-danger" @onclick="() => DeleteBook(book.Id)">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    IEnumerable<Book>? response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        response = bookService.GetBooks();
+    }
+
+    private void DeleteBook(int id)
+    {
+        var result = bookService.DeleteBook(id);
+        if (result)
+        {
+            response = bookService.GetBooks();
+            StateHasChanged();
+        }
+    }
+}

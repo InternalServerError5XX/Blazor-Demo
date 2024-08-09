@@ -1,0 +1,58 @@
+﻿@using Books.API.Server.Models
+@using Books.API.Server.Services
+@inject IBookService bookService
+
+@if(response == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="card shadow-sm card-body">
+        <form>
+            <div class="form-group">
+                <label class="control-label">Id</label>
+                <input class="form-control mt-2" @bind="response.Id" readonly />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label class="control-label">Title</label>
+                <input class="form-control mt-2" @bind="response.Title" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4">
+                <label class="control-label">Author</label>
+                <input class="form-control mt-2" @bind="response.Author" />
+                <span class="text-danger"></span>
+            </div>
+            <button type="button" class="btn btn-primary mt-3" @onclick="() => UpdateBook(response.Id, bookDto)">Update</button>
+        </form>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Book response = null!;
+    private BookDto bookDto = new BookDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+
+        response = bookService.GetBook(Id);
+    }
+
+    private void UpdateBook(int id, BookDto bookDto)
+    {
+        bookDto.Title = response.Title;
+        bookDto.Author = response.Author;
+
+        var result = bookService.UpdateBook(id, bookDto);
+        if (result != null)
+        {
+            response = bookService.GetBook(result.Id);
+            StateHasChanged();
+        }
+    }
+}

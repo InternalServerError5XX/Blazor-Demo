@@ -1,0 +1,33 @@
+﻿@using Books.API.Server.Models
+@using Books.API.Server.Services
+@inject IBookService bookService
+@inject NavigationManager navManager;
+
+<div class="card shadow-sm card-body">
+    <form>
+        <div class="form-group">
+            <label class="control-label">Title</label>
+            <input class="form-control mt-2" @bind="bookDto.Title" />
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group mt-4">
+            <label class="control-label">Author</label>
+            <input class="form-control mt-2" @bind="bookDto.Author" />
+            <span class="text-danger"></span>
+        </div>
+        <button type="button" class="btn btn-primary mt-3" @onclick="() => CreateBook(bookDto)">Add</button>
+    </form>
+</div>
+
+@code {
+    private BookDto bookDto = new BookDto();
+
+    private void CreateBook(BookDto bookDto)
+    {
+        var result = bookService.AddBook(bookDto);
+        if (result != null)
+        {
+            navManager.NavigateTo($"/books/{result.Id}");
+        }
+    }
+}

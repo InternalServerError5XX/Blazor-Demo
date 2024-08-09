@@ -1,0 +1,13 @@
+﻿@page "/books/{id:int}"
+@rendermode InteractiveServer
+
+<PageTitle>Book - @Id</PageTitle>
+
+<h1>Book - @Id</h1>
+
+<Books.Api.Components.Components.BookInfo Id="@Id"></Books.Api.Components.Components.BookInfo>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}
